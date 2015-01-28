@@ -29,7 +29,7 @@ function (diff, alpha, tail) {
   subCol3 = c(sigSgns)
 
   # "\u00B1" is unicode sign of "plusminus"
-  # Output format:   mean(±1 SD)[:space:]signif.level
+  # Output format:   mean(+-1 SD)[:space:]signif.level
   #                  Mean and SD are rounded to two decimal places.
   outD = paste(round(subCol1, 2), 
                paste("(", "\u00B1", round(subCol2, 2), ")", sep=""), 

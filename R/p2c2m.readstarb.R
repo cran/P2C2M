@@ -107,9 +107,9 @@ function (apWd, inFn, pFHndl) {
 # 5. Loading phybase species trees #
 ####################################
 
-  # See if flag descrStats contains "RAY", for which phybase species trees are
+  # See if flag descrStats contains "COAL_LIU", for which phybase species trees are
   # needed
-  if ("RAY" %in% descrStats) {
+  if ("COAL_LIU" %in% descrStats) {
     loghelpers.prnt2(paste("Phybase species trees",sep=""), pFHndl, tofileFlg=T, 
                        color="blue")
 
@@ -128,7 +128,7 @@ N(phybase species trees)", fg="red"), "\n", sep="")
     }
   }
 
-  if (!"RAY" %in% descrStats) {
+  if (!"COAL_LIU" %in% descrStats) {
     pTrees = NULL
   }
 

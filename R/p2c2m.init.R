@@ -1,5 +1,5 @@
 p2c2m.init <-
-function (xml.file, descr.stats = c("GTP","NDC"), 
+function (xml.file, descr.stats = c("COAL_REID","NDC"), 
                        beast.vers="1.8", single.allele=c("O"), num.reps=100, 
                        use.sorted=F, use.mpi=F, verbose=F, dbg=F) {
   # Descr:  initiates the global variables

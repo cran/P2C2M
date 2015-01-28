@@ -2,9 +2,9 @@ corehelpers.metrics <-
 function(gTree, pTree, pTreeNames, sTree, 
                                assoc, ploidy, descrStats, singleAllele) {
   # Descr:    corehelpers.metrics
-  # Deps:     calc.gtp
+  # Deps:     calc.coal_reid
   #           calc.ndc
-  #           calc.ray
+  #           calc.coal_liu
   # I/p:      gTree
   #           pTree
   #           pTreeNames
@@ -16,7 +16,7 @@ function(gTree, pTree, pTreeNames, sTree,
 
   #dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
   #if (dbgBool) {
-  #  cat("\n", xtermStyle::style("DEBUGMODE> corehelpers.emp", fg="red"), sep="")
+  #  cat("\n", xtermStyle::style("DEBUGMODE> corehelpers.metrics", fg="red"), sep="")
   #}
 
   outL = list()
@@ -27,9 +27,9 @@ function(gTree, pTree, pTreeNames, sTree,
     outL$GSI = frmtMntse(gsi, 4)
   }
 
-  if ("GTP" %in% descrStats) {
-    gtp = calc.gtp(gTree, sTree, assoc, ploidy)
-    outL$GTP = frmtMntse(gtp, 4)
+  if ("COAL_REID" %in% descrStats) {
+    gtp = calc.coal_reid(gTree, sTree, assoc, ploidy)
+    outL$COAL_REID = frmtMntse(gtp, 4)
   }
 
   if ("NDC" %in% descrStats) {
@@ -37,9 +37,9 @@ function(gTree, pTree, pTreeNames, sTree,
     outL$NDC = frmtMntse(ndc, 4)
   }
 
-  if ("RAY" %in% descrStats) {
-    ray = calc.ray(gTree, pTree, pTreeNames, assoc)
-    outL$RAY = frmtMntse(ray, 4)
+  if ("COAL_LIU" %in% descrStats) {
+    ray = calc.coal_liu(gTree, pTree, pTreeNames, assoc)
+    outL$COAL_LIU = frmtMntse(ray, 4)
   }
 
   outD = unlist(outL)

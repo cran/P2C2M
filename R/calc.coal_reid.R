@@ -1,4 +1,4 @@
-calc.gtp <-
+calc.coal_reid <-
 function(gTree, sTree, assoc, ploidy) {
   # Descr:    calculates the probability of a whole gene tree
   #           by calculating the probability of subtrees defined 
@@ -14,7 +14,7 @@ function(gTree, sTree, assoc, ploidy) {
 
   #dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
   #if (dbgBool) {
-  #  cat("\n",xtermStyle::style("DEBUGMODE> calc.gtp",fg="red"),sep="")
+  #  cat("\n",xtermStyle::style("DEBUGMODE> calc.coal_reid",fg="red"),sep="")
   #}
 
   handle = calc.parse(sTree, assoc)

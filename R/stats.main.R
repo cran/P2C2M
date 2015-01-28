@@ -21,8 +21,8 @@ function(ind, loci, alpha) {
   # T-tests for all descriptive statistics are two-tailed, because there is no
   # a priori reason in which direction they should differ.
   tailL = list()
-  tailL$GTP = "2"
-  tailL$RAY = "2"
+  tailL$COAL_REID = "2"
+  tailL$COAL_LIU = "2"
   tailL$NDC = "2"
   tailL$GSI = "2"
   ## T-tests for NDC should be left one-tailed, because trees not compliant 
@@ -43,14 +43,6 @@ function(ind, loci, alpha) {
     acrGenes[[stat]] = stats.acrossGenes(ind[[stat]]$dif, alpha, tailL[[stat]])
   }
 
-  #RAY_perG = stats.perGene(ind$RAY$dif, alpha, tail=RAYtail)
-  #NDC_perG = stats.perGene(ind$NDC$dif, alpha, tail=NDCtail)
-  #GSI_perG = stats.perGene(ind$GSI$dif, alpha, tail=GSItail)
-
-  #RAY_acrossG = stats.acrossGenes(ind$RAY$dif, alpha, tail=RAYtail)
-  #NDC_acrossG = stats.acrossGenes(ind$NDC$dif, alpha, tail=NDCtail)
-  #GSI_acrossG = stats.acrossGenes(ind$GSI$dif, alpha, tail=GSItail)
-
 #######################
 # 3. Combining output #
 #######################
@@ -58,12 +50,12 @@ function(ind, loci, alpha) {
 
   # perGene output
   outL$perGene = sapply(perGene, cbind)
-  #outL$perGene = cbind(GTP_perG, RAY_perG, NDC_perG, GSI_perG)
+  #outL$perGene = cbind(COAL_REID_perG, COAL_LIU_perG, NDC_perG, GSI_perG)
   rownames(outL$perGene) = c(loci)
 
   # acrossGene output
   outL$acrGenes = sapply(acrGenes, cbind)
-  #outL$acrossGenes = cbind(GTP_acrossG, RAY_acrossG, NDC_acrossG, GSI_acrossG)
+  #outL$acrossGenes = cbind(COAL_REID_acrossG, COAL_LIU_acrossG, NDC_acrossG, GSI_acrossG)
   rownames(outL$acrGenes) = c("Sum", "Mean", "Median", "Mode", "CV")
 
   # Naming rows of output

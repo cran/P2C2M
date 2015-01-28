@@ -7,67 +7,75 @@
 
 
 ###################################################
-### code chunk number 2: P2C2M_Vignette.Rnw:42-50
+### code chunk number 2: P2C2M_Vignette.Rnw:43-54
 ###################################################
-library(P2C2M)
+require(P2C2M)
+require(ggplot2)
+require(grid)
 data(viz_example_1)
 inp = viz_example_1
 alpha = 0.05
 inData = qnts = df = titles = list()
 df$lwr = df$upr = list()
-titles$sorted = sprintf("gene%02d_sorted", c(1:10))
-titles$unsorted = sprintf("gene%02d_unsorted", c(1:10))
+titles = sprintf("gene%02d", c(1:10))
+colnames(inp$nReps0) = titles
+colnames(inp$nReps10) = titles
 
 
 ###################################################
-### code chunk number 3: P2C2M_Vignette.Rnw:60-66
+### code chunk number 3: P2C2M_Vignette.Rnw:64-72
 ###################################################
-colnames(inp$sorted) = titles$sorted
-inData$sorted = stack(as.data.frame(inp$sorted))
-colnames(inData$sorted) = c("value", "gene")
-qnts$sorted = apply(inp$sorted, 2, quantile, c(alpha, 1-alpha), na.rm=TRUE)
-df$lwr$sorted = data.frame(lwrQntl=qnts$sorted[1,], gene=names(qnts$sorted[1,]))
-df$upr$sorted = data.frame(uprQntl=qnts$sorted[2,], gene=names(qnts$sorted[2,]))
+inData$nReps10 = stack(as.data.frame(inp$nReps10))
+inData$nReps10[,3] = "nReps10"
+colnames(inData$nReps10) = c("value", "gene", "n_reps")
+qnts$nReps10 = apply(inp$nReps10, 2, quantile, c(alpha, 1-alpha), na.rm=TRUE)
+df$lwr$nReps10 = data.frame(lwrQntl=qnts$nReps10[1,], gene=names(qnts$nReps10[1,]),
+                            n_reps=rep("nReps10", 10))
+df$upr$nReps10 = data.frame(uprQntl=qnts$nReps10[2,], gene=names(qnts$nReps10[2,]),
+                            n_reps=rep("nReps10", 10))
 
 
 ###################################################
-### code chunk number 4: P2C2M_Vignette.Rnw:76-82
+### code chunk number 4: P2C2M_Vignette.Rnw:82-90
 ###################################################
-colnames(inp$unsorted) = titles$unsorted
-inData$unsorted = stack(as.data.frame(inp$unsorted))
-colnames(inData$unsorted) = c("value", "gene")
-qnts$unsorted = apply(inp$unsorted, 2, quantile, c(alpha, 1-alpha), na.rm=TRUE)
-df$lwr$unsorted = data.frame(lwrQntl=qnts$unsorted[1,], gene=names(qnts$unsorted[1,]))
-df$upr$unsorted = data.frame(uprQntl=qnts$unsorted[2,], gene=names(qnts$unsorted[2,]))
+inData$nReps0 = stack(as.data.frame(inp$nReps0))
+inData$nReps0[,3] = "nReps0"
+colnames(inData$nReps0) = c("value", "gene", "n_reps")
+qnts$nReps0 = apply(inp$nReps0, 2, quantile, c(alpha, 1-alpha), na.rm=TRUE)
+df$lwr$nReps0 = data.frame(lwrQntl=qnts$nReps0[1,], gene=names(qnts$nReps0[1,]),
+                           n_reps=rep("nReps0", 10))
+df$upr$nReps0 = data.frame(uprQntl=qnts$nReps0[2,], gene=names(qnts$nReps0[2,]),
+                           n_reps=rep("nReps0", 10))
 
 
 ###################################################
-### code chunk number 5: P2C2M_Vignette.Rnw:91-95
+### code chunk number 5: P2C2M_Vignette.Rnw:99-103
 ###################################################
-inData = rbind(inData$sorted, inData$unsorted)
-dfLwr = rbind(df$lwr$sorted, df$lwr$unsorted)
-dfUpr = rbind(df$upr$sorted, df$upr$unsorted)
-inData$gene = factor(inData$gene, levels = sort(c(titles$sorted, titles$unsorted)))
+inData = rbind(inData$nReps0, inData$nReps10)
+dfLwr = rbind(df$lwr$nReps0, df$lwr$nReps10)
+dfUpr = rbind(df$upr$nReps0, df$upr$nReps10)
+inData$gene = factor(inData$gene, levels = sort(titles))
 
 
 ###################################################
-### code chunk number 6: P2C2M_Vignette.Rnw:105-125
+### code chunk number 6: P2C2M_Vignette.Rnw:113-134
 ###################################################
-library(ggplot2)
 ggplot(data=inData, aes(x=value)) +
   geom_density() +
-  facet_grid(gene~.) +
+  facet_grid(gene ~ n_reps, scales = "free_y") +
   labs(x="Difference values") + 
-  ggtitle(expression(atop("Ranked vs. Unranked Distributions", 
-                     atop(italic("Descriptive Statistic: RAY"), "")))) +
+  ggtitle(expression(atop("Distributions under different N of replicates", 
+                     atop(italic("Descriptive Statistic: coal (Liu & Yu 2010)"), "")))) +
 
   theme_bw() +
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank(),
+  theme(axis.text = element_text(size=5),
+        axis.title.y=element_blank(),
         strip.text.y=element_text(angle=0),
         panel.grid.major.x=element_blank(),
         panel.grid.major.y=element_blank(),
-        strip.background=element_rect(fill="white")) +
+        strip.background = element_rect(fill="white"), 
+        panel.margin = unit(0.5, "lines"),
+        plot.title = element_text(face="bold", size=rel(1.5), vjust=-1)) +
   # Limits on the x-axis improve the visualization
   xlim(-500, 500) + 
   geom_vline(xintercept=0, linetype = "dashed") + 
@@ -76,24 +84,25 @@ ggplot(data=inData, aes(x=value)) +
 
 
 ###################################################
-### code chunk number 7: P2C2M_Vignette.Rnw:131-151
+### code chunk number 7: P2C2M_Vignette.Rnw:142-163
 ###################################################
-library(ggplot2)
 ggplot(data=inData, aes(x=value)) +
   geom_density() +
-  facet_grid(gene~.) +
+  facet_grid(gene ~ n_reps, scales = "free_y") +
   labs(x="Difference values") + 
-  ggtitle(expression(atop("Ranked vs. Unranked Distributions", 
-                     atop(italic("Descriptive Statistic: RAY"), "")))) +
+  ggtitle(expression(atop("Distributions under different N of replicates", 
+                     atop(italic("Descriptive Statistic: coal (Liu & Yu 2010)"), "")))) +
 
   theme_bw() +
-  theme(axis.text.y=element_blank(),
-        axis.ticks.y=element_blank(),
+  theme(axis.text = element_text(size=5),
+        axis.title.y=element_blank(),
         strip.text.y=element_text(angle=0),
         panel.grid.major.x=element_blank(),
         panel.grid.major.y=element_blank(),
-        strip.background=element_rect(fill="white")) +
-  # Limits on the x-axis helps the visualization
+        strip.background = element_rect(fill="white"), 
+        panel.margin = unit(0.5, "lines"),
+        plot.title = element_text(face="bold", size=rel(1.5), vjust=-1)) +
+  # Limits on the x-axis improve the visualization
   xlim(-500, 500) + 
   geom_vline(xintercept=0, linetype = "dashed") + 
   geom_vline(aes(xintercept=lwrQntl), dfLwr, color="grey") +
@@ -101,17 +110,18 @@ ggplot(data=inData, aes(x=value)) +
 
 
 ###################################################
-### code chunk number 8: P2C2M_Vignette.Rnw:167-170
+### code chunk number 8: P2C2M_Vignette.Rnw:184-188
 ###################################################
-library(P2C2M)
+require(P2C2M)
+require(ggplot2)
 data(viz_example_2)
 inp = viz_example_2
 
 
 ###################################################
-### code chunk number 9: P2C2M_Vignette.Rnw:181-198
+### code chunk number 9: P2C2M_Vignette.Rnw:199-216
 ###################################################
-myfunc = function(inData, simNum){
+customfunc = function(inData, simNum){
   handle = inData
   colnames(handle) = c("gtp", "ray", "ndc", "gsi")
   # Convert results into presence/absence matrix
@@ -131,18 +141,18 @@ return(handle)
 
 
 ###################################################
-### code chunk number 10: P2C2M_Vignette.Rnw:208-223
+### code chunk number 10: P2C2M_Vignette.Rnw:226-241
 ###################################################
 highL = list()
 sims = as.numeric(names(inp$High))
-for (i in 1:length(inp$High)) {highL[[i]] = myfunc(inp$High[[i]], sims[i])}
+for (i in 1:length(inp$High)) {highL[[i]] = customfunc(inp$High[[i]], sims[i])}
 High = do.call("rbind", highL)
 High[,ncol(High)+1] = "High_Subst_Rate"
 colnames(High)[ncol(High)] = "ratetype"
 
 lowL = list()
 sims = as.numeric(names(inp$Low))
-for (i in 1:length(inp$Low)) {lowL[[i]] = myfunc(inp$Low[[i]], sims[i])}
+for (i in 1:length(inp$Low)) {lowL[[i]] = customfunc(inp$Low[[i]], sims[i])}
 Low = do.call("rbind", lowL)
 Low[,ncol(Low)+1] = "Low_Subst_Rate"
 colnames(Low)[ncol(Low)] = "ratetype"
@@ -151,36 +161,34 @@ inData = rbind(High, Low)
 
 
 ###################################################
-### code chunk number 11: P2C2M_Vignette.Rnw:233-245
+### code chunk number 11: P2C2M_Vignette.Rnw:250-261
 ###################################################
-library(ggplot2)
 ggplot(data=inData, aes(x=sim,y=gene)) + 
   geom_point(aes(colour=value), size = 3) +
   scale_colour_manual(values = c(NA,'black')) + 
   facet_grid(stat~ratetype) + 
-  ggtitle(expression(atop("Distribution of False Positives",
+  ggtitle(expression(atop("Distribution of False Positive Results",
           atop(italic("Alpha=0.1") , "")))) +
   theme_bw() + 
+  theme(axis.text = element_text(size=5),
+        strip.background = element_rect(fill="white")) +
   scale_x_discrete(breaks=c(1:5), labels=c(1:5)) +
-  scale_y_discrete(breaks=c(10:1), labels=c(10:1)) +
-  theme(strip.background = element_rect(fill="white")
-  )
+  scale_y_discrete(breaks=c(10:1), labels=c(10:1))
 
 
 ###################################################
-### code chunk number 12: P2C2M_Vignette.Rnw:252-264
+### code chunk number 12: P2C2M_Vignette.Rnw:268-279
 ###################################################
-library(ggplot2)
 ggplot(data=inData, aes(x=sim,y=gene)) + 
   geom_point(aes(colour=value), size = 3) +
   scale_colour_manual(values = c(NA,'black')) + 
   facet_grid(stat~ratetype) + 
-  ggtitle(expression(atop("Distribution of False Positives",
+  ggtitle(expression(atop("Distribution of False Positive Results",
           atop(italic("Alpha=0.1") , "")))) +
   theme_bw() + 
+  theme(axis.text = element_text(size=5),
+        strip.background = element_rect(fill="white")) +
   scale_x_discrete(breaks=c(1:5), labels=c(1:5)) +
-  scale_y_discrete(breaks=c(10:1), labels=c(10:1)) +
-  theme(strip.background = element_rect(fill="white")
-  )
+  scale_y_discrete(breaks=c(10:1), labels=c(10:1))
 
 

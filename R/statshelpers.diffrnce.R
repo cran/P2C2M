@@ -1,12 +1,12 @@
 statshelpers.diffrnce <-
-function (emp, sim) {
+function (post_dist, post_pred_dist) {
   ####################################
   # Function "statshelpers.diffrnce" #
   ####################################
-  # Descr:    calculates the difference between empirical and simulated
+  # Descr:    calculates the difference between post_distirical and post_pred_distulated
   # Deps:     -
-  # I/p:      emp
-  #           sim
+  # I/p:      post_dist
+  #           post_pred_dist
 
   dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
   if (dbgBool) {
@@ -14,11 +14,11 @@ function (emp, sim) {
         fg="red"), sep="")
   }
 
-  # Note: The difference is "empirical-simulated". Since "empirical" is worse 
-  # than "simulated" whenever it does not conform to the coalescent model (i.e.
+  # Note: The difference is "post_distirical-post_pred_distulated". Since "post_distirical" is worse 
+  # than "post_pred_distulated" whenever it does not conform to the coalescent model (i.e.
   # has larger values), significant differences will be more positive than 
   # non-significant differences.
-  diff = emp - sim
+  diff = post_dist - post_pred_dist
   # TFL converts from type "list" to type "double"; is important, because
   # is.infinite and is.nan can only work on type "double"
   diff = as.matrix(diff)

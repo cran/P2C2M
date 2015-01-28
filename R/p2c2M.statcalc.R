@@ -60,7 +60,7 @@ function (path, xml.file, loci, resultData, prmFile) {
 #####################
 # 3. Writing legend #
 #####################
-  legend = "Differences are calculated as `empirical-simulated` (i.e. the stronger the number deviates from zero, the stronger the deviation of the empirical tree from the coalescent model). Each cell contains the following information in said order: mean, standard deviation and significance level. Codes in square brackets indicate the number of tails. Alpha values are automatically adjusted for the number of tails."
+  legend = "Differences between the posterior and the posterior predictive distributions. Each cell contains the following information in said order: mean, standard deviation, significance level. Codes in square brackets indicate the number of tails. Alpha values are automatically adjusted for the number of tails."
   outD$legend = legend
 
   if (dbgBool) {

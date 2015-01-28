@@ -20,5 +20,8 @@ function(diff) {
   Mean = rowMeans(diff)
   cv = Stdv/Mean
 
+  # TFL is CRITICAL, because there are occasional "Inf" in the matrix for 
+  # descriptive statistics "NDC"
+  is.na(cv) <- do.call(cbind, lapply(cv, is.infinite))
   return(cv)
 }

@@ -1,6 +1,6 @@
 p2c2m.complete <-
 function (path="/home/user/Desktop/", xml.file="beast.xml", 
-                           descr.stats="GTP,NDC", beast.vers="1.8", 
+                           descr.stats="COAL_REID,NDC", beast.vers="1.8", 
                            single.allele=c("O"), num.reps=100, 
                            use.sorted=FALSE, use.mpi=FALSE, verbose=FALSE, 
                            dbg=FALSE) {
@@ -21,7 +21,7 @@ function (path="/home/user/Desktop/", xml.file="beast.xml",
 
   # Check if selected descriptive stats are valid
   descrStats = toupper(sort(unlist(strsplit(descr.stats, split=","))))
-  selection = which(descrStats %in% c("GSI","GTP","NDC","RAY"))
+  selection = which(descrStats %in% c("COAL_REID","COAL_LIU","GSI","NDC"))
 
   # Error handling
   if (length(descrStats) != length(selection)) {

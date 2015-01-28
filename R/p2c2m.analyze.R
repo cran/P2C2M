@@ -22,16 +22,16 @@ function (inFn, inData, pFHndl) {
   NsTrees = length(inData$sTrees)
   singleAllele = get("p2c2m.flg.singleAllele", envir=p2c2m.globalVars)
   # generate empty matrices of dimensions 'matrix'
-  emp = sim = matrix(nrow=NsTrees, ncol=nLoci)
+  post_dist = post_pred_dist = matrix(nrow=NsTrees, ncol=nLoci)
   # label the columns of the empty matrices by the locus names
-  colnames(emp) = colnames(sim) = inData$loci
+  colnames(post_dist) = colnames(post_pred_dist) = inData$loci
   # Initilizing data 
   data = list()
 
-##################################
-# 2. Metrics for empirical trees #
-##################################
-  loghelpers.prnt1("Metrics for empirical trees", pFHndl, tofileFlg=T, 
+##########################################################
+# 2. Metrics for the trees of the posterior distribution #
+##########################################################
+  loghelpers.prnt1("Metrics for the trees of the posterior distribution", pFHndl, tofileFlg=T, 
                    color="green")
 
  ##########################################################
@@ -47,10 +47,10 @@ function (inFn, inData, pFHndl) {
       # Display tree number on screen
       if (vrbBool) {cat(" ", i, sep="")}
       # Save tree number as replicate ID
-      assign("p2c2m.flg.repID", paste("emp", i, sep="."), 
+      assign("p2c2m.flg.repID", paste("post_dist", i, sep="."), 
              envir = p2c2m.globalVars)
 
-      emp[i,j] = corehelpers.metrics(inData$gTrees[[j]][[i]],
+      post_dist[i,j] = corehelpers.metrics(inData$gTrees[[j]][[i]],
                                      inData$pTrees$tree[[i]],
                                      inData$pTrees$names,
                                      inData$sTrees[[i]],
@@ -66,24 +66,24 @@ function (inFn, inData, pFHndl) {
  # 2.b. Assembling results #
  ###########################
   for (s in descrStats) {
-    # Populating list "data" with the empirical results
-    data[[s]]$emp$unsort = as.data.frame(rtnlc(emp, which(s==descrStats)))
+    # Populating list "data" with the results of the trees of the posterior distribution
+    data[[s]]$post_dist$unsort = as.data.frame(rtnlc(post_dist, which(s==descrStats)))
     # Assigning colnames
-    colnames(data[[s]]$emp$unsort) = inData$loci
+    colnames(data[[s]]$post_dist$unsort) = inData$loci
     # Generating a sorted result clone
-    data[[s]]$emp$sorted = apply(data[[s]]$emp$unsort, MARGIN=2, sort)
+    data[[s]]$post_dist$sorted = apply(data[[s]]$post_dist$unsort, MARGIN=2, sort)
     # Writing results to parameter file
-    loghelpers.wrt2(cat(paste(s, "[emp][unsort]\n", sep="")), pFHndl)
-    loghelpers.wrt2(data[[s]]$emp$unsort, pFHndl)
-    loghelpers.wrt2(cat(paste(s, "[emp][sorted]\n", sep="")), pFHndl)
-    loghelpers.wrt2(data[[s]]$emp$sorted, pFHndl)
+    loghelpers.wrt2(cat(paste(s, "[post_dist][unsort]\n", sep="")), pFHndl)
+    loghelpers.wrt2(data[[s]]$post_dist$unsort, pFHndl)
+    loghelpers.wrt2(cat(paste(s, "[post_dist][sorted]\n", sep="")), pFHndl)
+    loghelpers.wrt2(data[[s]]$post_dist$sorted, pFHndl)
   }
 
-##################################
-# 3. Metrics for simulated trees #
-##################################
-  loghelpers.prnt1("Metrics for simulated trees", pFHndl, tofileFlg=T,
-                   color="green")
+#####################################################################
+# 3. Metrics for the trees of the posterior predictive distribution #
+#####################################################################
+  loghelpers.prnt1("Metrics for the trees of the posterior predictive distribution",
+                   pFHndl, tofileFlg=T, color="green")
 
  ##################################
  # 3.a. Initiate MPI (if applic.) #
@@ -105,7 +105,7 @@ function (inFn, inData, pFHndl) {
     #Rmpi:: mpi.spawn.Rslaves(nslaves=nproc-1, needlog=F)
     Rmpi:: mpi.spawn.Rslaves(nslaves=nproc-1)
     # Passing separate functions to MPI environment
-    mpiEnvir = c(calc.gtp, calc.gsi, calc.ndc, calc.parse, calc.ray, 
+    mpiEnvir = c(calc.coal_reid, calc.gsi, calc.ndc, calc.parse, calc.coal_liu, 
                  calchelpers.brprob, calchelpers.descend, calchelpers.dmvparse,
                  calchelpers.gtreeparse, calchelpers.nodetips, 
                  calchelpers.probcalc, corehelpers.metrics, corehelpers.repl, 
@@ -122,13 +122,13 @@ function (inFn, inData, pFHndl) {
   for (j in 1:nLoci) {
     loghelpers.prnt2(paste("Locus '", inData$loci[j], "'", sep=""), pFHndl, 
                      tofileFlg=T, color="blue")
-    if (vrbBool) {cat("Analyzing sim trees:", "\n", sep="")}
+    if (vrbBool) {cat("Analyzing the posterior predictive trees:", "\n", sep="")}
     nTips = length(inData$gTrees[[j]][[1]]$tip.label)
     for (i in 1:NsTrees) {
       # Display tree number on screen
       if (vrbBool) {cat(" ", i, sep="")}
       # Save tree number as replicate ID
-      assign("p2c2m.flg.repID", paste("sim", j, i, sep="."), 
+      assign("p2c2m.flg.repID", paste("post_pred_dist", j, i, sep="."), 
              envir = p2c2m.globalVars)
 
 
@@ -216,8 +216,8 @@ function (inFn, inData, pFHndl) {
       sumD = unlist(sumD)
       names(sumD) = NULL
 
-      # Save the replicate values to variable "sim"
-      sim[i,j] = toString(sumD)
+      # Save the replicate values to variable "post_pred_dist"
+      post_pred_dist[i,j] = toString(sumD)
       
     }
   if (vrbBool) {cat("\n")}
@@ -239,40 +239,40 @@ function (inFn, inData, pFHndl) {
   for (s in descrStats) {
     # Populating list "data" with the simulated results
     # Both "as.matrix" and "as.data.frame" are critical below
-    data[[s]]$sim$unsort = as.matrix(as.data.frame(rtnlc(sim, which(s==descrStats))))
+    data[[s]]$post_pred_dist$unsort = as.matrix(as.data.frame(rtnlc(post_pred_dist, which(s==descrStats))))
     # Assigning colnames
-    colnames(data[[s]]$sim$unsort) = inData$loci
+    colnames(data[[s]]$post_pred_dist$unsort) = inData$loci
     # Generating a sorted result clone
-    data[[s]]$sim$sorted = apply(data[[s]]$sim$unsort, MARGIN=2, sort)
+    data[[s]]$post_pred_dist$sorted = apply(data[[s]]$post_pred_dist$unsort, MARGIN=2, sort)
     # Writing results to parameter file
-    loghelpers.wrt2(cat(paste(s, "[sim][unsort]\n", sep="")), pFHndl)
-    loghelpers.wrt2(data[[s]]$sim$unsort, pFHndl)
-    loghelpers.wrt2(cat(paste(s, "[sim][sorted]\n", sep="")), pFHndl)
-    loghelpers.wrt2(data[[s]]$sim$sorted, pFHndl)
+    loghelpers.wrt2(cat(paste(s, "[post_pred_dist][unsort]\n", sep="")), pFHndl)
+    loghelpers.wrt2(data[[s]]$post_pred_dist$unsort, pFHndl)
+    loghelpers.wrt2(cat(paste(s, "[post_pred_dist][sorted]\n", sep="")), pFHndl)
+    loghelpers.wrt2(data[[s]]$post_pred_dist$sorted, pFHndl)
   }
 
 #####################################
 # 4. Calculating metric differences #
 #####################################
-  loghelpers.prnt1("Calculating differences EMPIRICAL-SIMULATED", pFHndl, 
-                   tofileFlg=T, color="green")
+  loghelpers.prnt1("Calculating differences btw. the posterior and the posterior predictive distribution",
+                   pFHndl, tofileFlg=T, color="green")
   
   for (s in descrStats) {
     # Populating list "data" with the differences
     srtBool = get("P2C2M.flg.srtBool", envir=p2c2m.globalVars)
     if (srtBool) {
-      data[[s]]$dif = statshelpers.diffrnce(data[[s]]$emp$sorted, 
-                                            data[[s]]$sim$sorted)
+      data[[s]]$dif = statshelpers.diffrnce(data[[s]]$post_dist$sorted, 
+                                            data[[s]]$post_pred_dist$sorted)
       # Remove the data set not chosen
-      data[[s]]$emp$unsort = NULL
-      data[[s]]$sim$unsort = NULL
+      data[[s]]$post_dist$unsort = NULL
+      data[[s]]$post_pred_dist$unsort = NULL
     }
     else {
-      data[[s]]$dif = statshelpers.diffrnce(data[[s]]$emp$unsort, 
-                                            data[[s]]$sim$unsort)
+      data[[s]]$dif = statshelpers.diffrnce(data[[s]]$post_dist$unsort, 
+                                            data[[s]]$post_pred_dist$unsort)
       # Remove the data set not chosen
-      data[[s]]$emp$sorted = NULL
-      data[[s]]$sim$sorted = NULL
+      data[[s]]$post_dist$sorted = NULL
+      data[[s]]$post_pred_dist$sorted = NULL
     }
     # Writing differences to file
     loghelpers.wrt2(cat(paste(s, "[dif]\n", sep="")), pFHndl)

@@ -1,4 +1,4 @@
-calc.ray <-
+calc.coal_liu <-
 function (gTree, sTree, stNames, assoc) {
   # Descr:  calculating the Ranalla&Yang index
   # Deps:   (various)     
@@ -9,7 +9,7 @@ function (gTree, sTree, stNames, assoc) {
 
 #  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
 #  if (dbgBool) {
-#    cat("\n",xtermStyle::style("DEBUGMODE> calc.ray",fg="red"),sep="")
+#    cat("\n",xtermStyle::style("DEBUGMODE> calc.coal_liu",fg="red"),sep="")
 #  }
 
 ## 1. Loading of gene trees and gene tree attributes
@@ -41,9 +41,9 @@ function (gTree, sTree, stNames, assoc) {
   data$spStrMtrx = spStrMtrx
 
 ### 5. DEBUG mode
-#  logdata = list(list(RAY=data))
+#  logdata = list(list(COAL_LIU=data))
 #  names(logdata) = get("p2c2m.flg.repID", envir=p2c2m.globalVars)
-#  loghelpers.dbg(logdata, "DescrStatsRawInput", "INPUT OF 'RAY'")
+#  loghelpers.dbg(logdata, "DescrStatsRawInput", "INPUT OF 'COAL_LIU'")
 
 ## 6. Calculating descriptive statistic
   ray = phybase::loglikeSP(data$gTree.string, data$sTree.string,
