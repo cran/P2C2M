@@ -1,4 +1,4 @@
-stats.acrossGenes <-
+stats.acrGenes <-
 function (diff, alpha, tail) {
   # Descr:    calculates statistics across genes
   # Deps:     statshelpers.qntls
@@ -7,9 +7,11 @@ function (diff, alpha, tail) {
   #           alpha
   #           tail
 
-  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-  if (dbgBool) {
-    cat("\n", xtermStyle::style("DEBUGMODE> stats.acrossGenes", fg="red"), sep="")
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> stats.acrGenes", fg="red"),
+        sep="")
   }
 
   # Perform calculations per row (i.e per MCMC generation)
@@ -32,10 +34,9 @@ function (diff, alpha, tail) {
   subCol1 = c(apply(acrossG, MARGIN=2, mean))
   subCol2 = c(apply(acrossG, MARGIN=2, sd))
   subCol3 = c(sigSgns)
-
-  outD = paste(round(subCol1, 2), 
+  outData = paste(round(subCol1, 2), 
                paste("(", "\u00B1", round(subCol2, 2), ")", sep=""), 
                subCol3)
 
-  return(outD)
+  return(outData)
 }

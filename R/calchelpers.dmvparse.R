@@ -5,34 +5,31 @@ function(sTree, nSp) {
   # I/p:      sTree
   #           nSp
 
-#  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-#  if (dbgBool) {
-#    cat("\n", xtermStyle::style("DEBUGMODE> calchelpers.dmvparse", fg="red"),
-#        sep="")
-#  }
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> calchelpers.dmvparse", fg="red"),
+        sep="")
+  }
+  
+    # DEBUGLINES:
+    #cat("\nsTree\n"); print(sTree)
+    #cat("\nsTree$edge\n"); print(sTree$edge)
+    #cat("\nsTree$edge.length\n"); print(sTree$edge.length)
+    #cat("\nsTree$dmv\n"); print(sTree$dmv)
 
-    # generating rows of node number - branch length pairs
-    dmvD = cbind(sTree$edge[,2], sTree$edge.length)
-    # adding another branch of length Inf
-    dmvD = rbind(dmvD, c((nSp+1), Inf))
-    # adding dmv values
-    dmvD = cbind(dmvD, sTree$dmv)
-    # order the matrix by the first column
-    dmvD = dmvD[order(dmvD[,1]),]
-    # calc branchling times of the species tree (via ape-function)
-    stBt = ape::branching.times(sTree)
+    dmvD = cbind(sTree$edge[,2], sTree$edge.length)                     # generating rows of node number - branch length pairs
+    dmvD = rbind(dmvD, c((nSp+1), Inf))                                 # adding another branch of length Inf
+    dmvD = cbind(dmvD, sTree$dmv)                                       # adding dmv values
+    dmvD = dmvD[order(dmvD[,1]),]                                       # order the matrix by the first column
+    stBt = ape::branching.times(sTree)                                  # calc branching times of the species tree (via ape-function)
 
-    # sort the branching times by their names (which are numbers)
     # TFL may not be necessary, as stBt may already be sorted
-    stBt = stBt[order(as.numeric(names(stBt)))]
+    stBt = stBt[order(as.numeric(names(stBt)))]                         # sort the branching times by their names (which are numbers)
 
-    # add x zeros to the beginning of branching times list, 
-    # where x = number of species in species tree
-    pre = structure(rep(0, nSp),.Names=c(1:nSp))
+    pre = structure(rep(0, nSp), .Names=c(1:nSp))                       # add x zeros to the beginning of branching times list, where x = number of species in sTree
     stBt = c(pre, stBt)
 
-    # add the column "stBt" to the matrix "dmvD"
-    dmvD = cbind(dmvD, stBt)
+    dmvD = cbind(dmvD, stBt)                                            # add the column "stBt" to the matrix "dmvD"
     colnames(dmvD) = c("node", "length", "dmv", "sbt")
     rownames(dmvD) = c(1:length(stBt))
 

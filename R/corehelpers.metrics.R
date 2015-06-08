@@ -2,9 +2,9 @@ corehelpers.metrics <-
 function(gTree, pTree, pTreeNames, sTree, 
                                assoc, ploidy, descrStats, singleAllele) {
   # Descr:    corehelpers.metrics
-  # Deps:     calc.coal_reid
+  # Deps:     calc.lcwt
   #           calc.ndc
-  #           calc.coal_liu
+  #           calc.coal
   # I/p:      gTree
   #           pTree
   #           pTreeNames
@@ -14,22 +14,21 @@ function(gTree, pTree, pTreeNames, sTree,
   #           descrStats
   #           singleAllele
 
-  #dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-  #if (dbgBool) {
-  #  cat("\n", xtermStyle::style("DEBUGMODE> corehelpers.metrics", fg="red"), sep="")
-  #}
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> corehelpers.metrics", fg="red"), sep="")
+  }
 
   outL = list()
 
   if ("GSI" %in% descrStats) {
     gsi = calc.gsi(gTree, assoc, singleAllele)
-    # Setting a specific number of significands
-    outL$GSI = frmtMntse(gsi, 4)
+    outL$GSI = frmtMntse(gsi, 4)                                        # Setting a specific number of significands
   }
 
-  if ("COAL_REID" %in% descrStats) {
-    gtp = calc.coal_reid(gTree, sTree, assoc, ploidy)
-    outL$COAL_REID = frmtMntse(gtp, 4)
+  if ("LCWT" %in% descrStats) {
+    gtp = calc.lcwt(gTree, sTree, assoc, ploidy)
+    outL$LCWT = frmtMntse(gtp, 4)
   }
 
   if ("NDC" %in% descrStats) {
@@ -37,9 +36,16 @@ function(gTree, pTree, pTreeNames, sTree,
     outL$NDC = frmtMntse(ndc, 4)
   }
 
-  if ("COAL_LIU" %in% descrStats) {
-    ray = calc.coal_liu(gTree, pTree, pTreeNames, assoc)
-    outL$COAL_LIU = frmtMntse(ray, 4)
+  if ("COAL" %in% descrStats) {
+      
+    # DEBUGLINES:
+    #cat("\ngTree\n"); print(gTree)
+    #cat("\npTree\n"); print(pTree)
+    #cat("\npTreeNames\n"); print(pTreeNames)
+    #cat("\nassoc\n"); print(assoc)
+    
+    ray = calc.coal(gTree, pTree, pTreeNames, assoc)
+    outL$COAL = frmtMntse(ray, 4)
   }
 
   outD = unlist(outL)

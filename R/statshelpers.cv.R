@@ -3,9 +3,9 @@ function(diff) {
   # Descr:    Calculates the coefficient of variance
   # Deps:     (none)
   # I/p:      inD
-  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-  if (dbgBool) {
-    cat("\n", xtermStyle::style("DEBUGMODE> statshelpers.cv", fg="red"), sep="")
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> statshelpers.cv", fg="red"), sep="")
   }
 
   # Structure of "diff" at this point:

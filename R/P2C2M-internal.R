@@ -13,5 +13,5 @@ function(libname = find.package("P2C2M"), pkgname = "P2C2M") {
 .onLoad <-
 function(libname = find.package("P2C2M"), pkgname = "P2C2M") {
     #packageStartupMessage("-- Setting up a package-specific environment --")
-    assign("p2c2m.globalVars", new.env(), envir=parent.env(environment()))
+    assign("P2C2M_globalVars", new.env(), envir=parent.env(environment()))
 }

@@ -1,4 +1,4 @@
-calc.coal_liu <-
+calc.coal <-
 function (gTree, sTree, stNames, assoc) {
   # Descr:  calculating the Ranalla&Yang index
   # Deps:   (various)     
@@ -7,15 +7,16 @@ function (gTree, sTree, stNames, assoc) {
   #         stNames
   #         assoc
 
-#  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-#  if (dbgBool) {
-#    cat("\n",xtermStyle::style("DEBUGMODE> calc.coal_liu",fg="red"),sep="")
-#  }
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n",xtermStyle::style("DEBUG> calc.coal",fg="red"),sep="")
+  }
 
 ## 1. Loading of gene trees and gene tree attributes
-  #gTree.treeshape = apTreeshape::as.treeshape(gTree)
-  gTree.treeshape = apTreeshape::as.treeshape.phylo(gTree)
-  gTreeTaxa = gTree.treeshape$names
+  # LEGACY: gTree.treeshape = apTreeshape::as.treeshape(gTree)
+  # LEGACY: gTree.treeshape = apTreeshape::as.treeshape.phylo(gTree)
+  # LEGACY: gTreeTaxa = gTree.treeshape$names
+  gTreeTaxa = gTree$tip.label
   gTree.string = ape::write.tree(gTree)
 
 ## 2. Loading of species trees and species tree attributes
@@ -40,10 +41,13 @@ function (gTree, sTree, stNames, assoc) {
   data$sTreeTaxa = sTreeTaxa
   data$spStrMtrx = spStrMtrx
 
+  # DEBUGLINES:
+  #cat("\ndata\n"); print(data)
+
 ### 5. DEBUG mode
-#  logdata = list(list(COAL_LIU=data))
-#  names(logdata) = get("p2c2m.flg.repID", envir=p2c2m.globalVars)
-#  loghelpers.dbg(logdata, "DescrStatsRawInput", "INPUT OF 'COAL_LIU'")
+#  logdata = list(list(COAL=data))
+#  names(logdata) = get("P2C2M_flg_repID", envir=P2C2M_globalVars)
+#  loghelpers.dbg(logdata, "DescrStatsRawInput", "INPUT OF 'COAL'")
 
 ## 6. Calculating descriptive statistic
   ray = phybase::loglikeSP(data$gTree.string, data$sTree.string,

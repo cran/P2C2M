@@ -1,4 +1,4 @@
-readhelpers.constit <-
+readhelpers.makeCFtable <-
 function(ind) {
   # Descr:  generating a constituent-frequency table
   # Deps: -
@@ -15,9 +15,9 @@ function(ind) {
   #   Var1 "alpinus"         "3"
   #   Var1 "alpinus"         "4"
 
-  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-  if (dbgBool) {
-    cat("\n", xtermStyle::style("DEBUGMODE> readhelpers.constit", fg="red"), 
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> readhelpers.makeCFtable", fg="red"), 
         sep="")
   }
 

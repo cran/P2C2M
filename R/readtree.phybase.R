@@ -4,22 +4,18 @@ function(inFn) {
   # Deps:   (none)
   # I/p:    inFn
 
-  beastVers = get("p2c2m.flg.beastVers", envir=p2c2m.globalVars)
-  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
+  beastVers = get("P2C2M_flg_beastV", envir=P2C2M_globalVars)
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
 
-  if (dbgBool) {
-    cat("\n", xtermStyle::style("DEBUGMODE> readtree.phybase", fg="red"), 
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> readtree.phybase", fg="red"), 
         sep="")
   }
 
-  # Specify name of parsing script
-  pySc = system.file("exec", paste("BEAST2phybase_", beastVers, ".py", sep=""), 
-                     package="P2C2M")
+  pySc = system.file("exec", paste("BEAST2phybase_", beastVers, ".py", sep=""), package="P2C2M")  # Specify name of parsing script
   system(paste("python2", pySc, inFn))
-  # Read tree via PHYBASE
-  pTrees = phybase::read.tree.string(paste(rmext(inFn), ".P2C2M.phyb", sep=""))
-  # Remove leading white space from tree specs
-  pTrees$tree = gsub("^ .", "", pTrees$tree)
+  pTrees = phybase::read.tree.string(paste(rmext(inFn), ".P2C2M.phyb", sep=""))  # Read tree via PHYBASE
+  pTrees$tree = gsub("^ .", "", pTrees$tree)                            # Remove leading white space from tree specs
 
   return(pTrees)
 }

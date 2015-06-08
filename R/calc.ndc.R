@@ -8,10 +8,10 @@ function(gTree, sTree, assoc) {
   #         assoc
   # Note:   ndc = "number of deep coalescences"
 
-  #dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-  #if (dbgBool) {
-  #  cat("\n",xtermStyle::style("DEBUGMODE> calc.ndc",fg="red"),sep="")
-  #}
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n",xtermStyle::style("DEBUG> calc.ndc",fg="red"),sep="")
+  }
 
   handle = calc.parse(sTree, assoc)
   nodes = handle$nodes

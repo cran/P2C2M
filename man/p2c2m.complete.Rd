@@ -9,8 +9,9 @@
 
 \usage{
 p2c2m.complete(path = "/home/user/Desktop/", xml.file = "beast.xml", 
-    descr.stats = "COAL_REID,NDC", beast.vers = "1.8", single.allele = c("O"), 
-    num.reps = 100, use.sorted = FALSE, use.mpi = FALSE, verbose = FALSE,
+    descr.stats = "LCWT,NDC", beast.vers = "1.8", 
+    single.allele = c("O"), num.reps = 1, use.sorted = FALSE, 
+    use.mpi = FALSE, save.metadata = FALSE, verbose = FALSE, 
     dbg = FALSE)
 }
 
@@ -28,9 +29,9 @@ p2c2m.complete(path = "/home/user/Desktop/", xml.file = "beast.xml",
     applied, specified as a double-quoted string. If multiple 
     statistics are specified, they must be separated by commas. A total 
     of four summary statistics is currently available: 
-    \code{"COAL_LIU"} and \code{"COAL_REID"} (both Rannala & Yang 2013), 
+    \code{"COAL"} and \code{"LCWT"} (both Rannala & Yang 2013), 
     \code{"GSI"} (Cummings et al. 2008), \code{"NDC"} (Maddison 1997). 
-    The default is \code{"COAL_REID,NDC"}.}
+    The default is \code{"LCWT,NDC"}.}
 
   \item{beast.vers}{the version of *BEAST (Heled and Drummond 2010) 
     used to perform the species tree inference, specified as a 
@@ -45,7 +46,7 @@ p2c2m.complete(path = "/home/user/Desktop/", xml.file = "beast.xml",
     statistic 'GSI'. The default is \code{c("O")}.}
 
   \item{num.reps}{the number of simulation replicates to be conducted, 
-    specified as an integer. The default is \code{100}.}
+    specified as an integer. The default is \code{1} (i.e., no replication).}
 
   \item{use.sorted}{a logical specifying if the summary statistics 
     generated from the posterior and from the posterior predictive 
@@ -58,18 +59,21 @@ p2c2m.complete(path = "/home/user/Desktop/", xml.file = "beast.xml",
     computer CPUs (if such exist on the system) in order to speed up 
     the calculations. Computations are then executed as parallel 
     processes. The default is \code{FALSE}.}
+    
+  \item{save.metadata}{a logical specifying if \pkg{P2C2M} saves 
+    the metadata of the analysis to the output variable. The default 
+    is \code{FALSE}.}
 
   \item{verbose}{a logical specifying if \pkg{P2C2M} prints status 
     information to the screen. The default is \code{FALSE}.}
 
   \item{dbg}{a logical specifying if \pkg{P2C2M} is to be run in a 
-    debug mode. If \code{TRUE}, then (a) only the first 5 percent of 
-    input trees are analyzed, (b) intermittent results are saved to 
-    file, and (c) information useful for debugging is printed to the 
-    screen. Argument \code{dbg = TRUE} must be set in combination with 
-    argument \code{verbose = TRUE}. The default is \code{FALSE}. This 
-    argument is intended for developers and should not be selected by 
-    regular users.}
+    debug mode. If \code{TRUE}, then only the first 5 percent of 
+    input trees are analyzed and information useful for debugging is 
+    printed to the screen. Argument \code{dbg = TRUE} must be set in 
+    combination with argument \code{verbose = TRUE}. The default is 
+    \code{FALSE}. This argument is intended for developers and should 
+    not be selected by regular users.}
 }
 
 \value{
@@ -109,6 +113,6 @@ inFile <- "sim.E.003.small.xml"
 
 # Posterior predictive simulations with a setting of 2 simulation 
 # replicates are preformed
-sim.E.003.small <- p2c2m.complete(inPath, inFile, num.reps=2)
+sim.E.003.small <- p2c2m.complete(inPath, inFile, num.reps=2, save.metadata=TRUE)
 }
 

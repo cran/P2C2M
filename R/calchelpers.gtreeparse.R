@@ -15,11 +15,11 @@ function(sTree, gTree, assoc, dmvD, node) {
 #           fNd = first node
 #           lNd = last node
 
-#  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-#  if (dbgBool) {
-#    cat("\n", xtermStyle::style("DEBUGMODE> calchelpers.gtreeparse", fg="red"),
-#        sep="")
-#  }
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> calchelpers.gtreeparse", fg="red"),
+        sep="")
+  }
 
     # returns the subtree that starts at node <node>
     subtree = calchelpers.descend(sTree, gTree, assoc, node)

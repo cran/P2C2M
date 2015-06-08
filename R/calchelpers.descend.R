@@ -12,16 +12,14 @@ function (sTree, gTree, assoc, cNode) {
 #           assoc
 #           cNode = coalescence node
 
-#  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-#  if (dbgBool) {
-#    cat("\n", xtermStyle::style("DEBUGMODE> calchelpers.descend", fg="red"),
-#        sep="")
-#  }
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> calchelpers.descend", fg="red"),
+        sep="")
+  }
 
     spNames = sTree$tip.label
-    # TFL means "Unless cNode is 'NA' AND unless the coalescence node is 
-    # the root, do ..."
-    if (!is.na(cNode) && cNode != (length(spNames)+1))
+    if (!is.na(cNode) && cNode != (length(spNames)+1))                  # Unless cNode is 'NA' AND unless the coalescence node is the root, do ...
         {
         subtreeTaxa = spNames[calchelpers.nodetips(sTree, cNode)]
         gTreeDscr = c()

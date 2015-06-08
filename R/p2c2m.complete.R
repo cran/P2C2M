@@ -1,11 +1,12 @@
 p2c2m.complete <-
 function (path="/home/user/Desktop/", xml.file="beast.xml", 
-                           descr.stats="COAL_REID,NDC", beast.vers="1.8", 
-                           single.allele=c("O"), num.reps=100, 
-                           use.sorted=FALSE, use.mpi=FALSE, verbose=FALSE, 
+                           descr.stats="LCWT,NDC", beast.vers="1.8", 
+                           single.allele=c("O"), num.reps=1, 
+                           use.sorted=FALSE, use.mpi=FALSE, 
+                           save.metadata=FALSE, verbose=FALSE,
                            dbg=FALSE) {
   # Descr:  initiates the entire package by starting the wrapper
-  # Deps:   p2c2m.init, p2c2m.readstarb, p2c2M.analyze, p2c2M.statcalc
+  # Deps:   p2c2m.readstarb, p2c2m.analyze
   # I/p:    path = absolute path to Working directory
   #         xml.file = name of Beauti XML infile
   #         descr.stats = list of descriptive statistics
@@ -14,79 +15,67 @@ function (path="/home/user/Desktop/", xml.file="beast.xml",
   #         num.reps = number of replicates
   #         use.sorted = decision if to use sorting
   #         use.mpi = decision if to use MPI
+  #         save.metadata = decision if metadata to be saved
   #         verbose = flag if status output printed on screen
   #         dbg = debugging flag
 
-  startTime = Sys.time()
+#########################
+# 1. Set global options #
+#########################
+  # TFL avoids line-wrapping in command "print()"
+  options(width=1000)
+  # TFL avoids numbers in scientific e-notation (i.e. "1.2345e+03" = 1234.5)
+  options(scipen=1000)
 
+#######################
+# 2. Parse user input #
+#######################
   # Check if selected descriptive stats are valid
   descrStats = toupper(sort(unlist(strsplit(descr.stats, split=","))))
-  selection = which(descrStats %in% c("COAL_REID","COAL_LIU","GSI","NDC"))
-
+  slctn = which(descrStats %in% c("LCWT","COAL","GSI","NDC"))
   # Error handling
-  if (length(descrStats) != length(selection)) {
-      stop(cat("\nERROR: Incorrect specification of descript. statistic(s)\n"))
+  if (length(descrStats) != length(slctn)) {
+      stop(cat("\nERROR: Incorrect spec. of descript. stat.\n"))
   }
 
-  # Set up variables and options
-  p2c2m.init(xml.file, descrStats, beast.vers, single.allele, num.reps, 
-             use.sorted, use.mpi, verbose, dbg)
-
-####################################
-# 1. Opening parameter file handle #
-####################################
-  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-
-  if (dbgBool) {
-    # Opening parameter file handle ("prmFile" = "parameter file handle")
-    # In command "file", "a" stands for append
-    prmFile = file(paste(rmext(xml.file), ".P2C2M.prmts.txt", sep=""), "a")
-    # Write name of infile to parameter file handle
-    writeLines(xml.file, prmFile)
-    cat("\n")
-  }
+################################
+# 3. Set environment variables #
+################################
+  # Note: I am not using true global variables (i.e. envir = .GlobalEnv), 
+  #       because such could have interfered with user-space.
+  assign("P2C2M_flg_xmlFile", xml.file, envir = P2C2M_globalVars)
+  # Note: not descr.stats, but descrStats
+  assign("P2C2M_flg_dscrStat", descrStats, envir = P2C2M_globalVars)
+  assign("P2C2M_flg_beastV", beast.vers, envir = P2C2M_globalVars) 
+  assign("P2C2M_flg_snglAl", single.allele, envir = P2C2M_globalVars)
+  assign("P2C2M_flg_nReps", num.reps, envir = P2C2M_globalVars)
+  assign("P2C2M_flg_srtBool", use.sorted, envir = P2C2M_globalVars)
+  assign("P2C2M_flg_mpiBool", use.mpi, envir = P2C2M_globalVars)
+  assign("P2C2M_flg_vrbBool", verbose, envir = P2C2M_globalVars)
+  assign("P2C2M_flg_dbgBool", dbg, envir = P2C2M_globalVars)
 
 ##########################
-# 2. Conducting analyses #
+# 4. Conducting analyses #
 ##########################
   # Generate indata
-  treeData = p2c2m.readstarb(path, xml.file, prmFile)
-
-  if (dbgBool) {
-    cat("\n", xtermStyle::style(
-        "DEBUGMODE> *** SAVING ALL LOADED TREES ***", 
-        fg="red"), "\n", sep="")
-    p2c2m.dbg.parsedInput = treeData
-    save(p2c2m.dbg.parsedInput, file = paste(rmext(xml.file), 
-         ".p2c2m.dbg.parsedInput.rda", sep=""))
-  }
-
-  # Generate results data
-  descrData = p2c2m.analyze(xml.file, treeData, prmFile)
-  # Caclulate statistics
-  resultData = p2c2M.statcalc(path, xml.file, treeData$loci, 
-                              descrData, prmFile)
-
-######################################################
-# 3. Printing runtime, closing parameter file handle #
-######################################################
-  endTime = Sys.time()
-
-  if (dbgBool) {
-  # Write runtime to parameter file
-    runTime = paste("\n", "Analysis started at:", startTime,
-                    "\n", "Analysis ended at:", endTime)
-    loghelpers.wrt2(cat(runTime), prmFile)
-
-    close(prmFile)
-  }
+  inData = p2c2m.readstarb(path, xml.file)
+  
+  # Generate results
+  metaData = p2c2m.analyze(xml.file, inData)
+        
+  # Calculate descriptive stats
+  resultData = stats.main(path, xml.file, inData$loci$dta, metaData)
 
 ##########################
-# 4. Summarizing outdata #
+# 5. Summarizing outdata #
 ##########################
-  outD = list()
-  outD$rawStats = descrData
-  outD$results = resultData
+  outData = list()
+  outData$results = resultData
 
-return(outD)
+  if (save.metadata) {
+    outData$inData = inData
+    outData$metaData = metaData
+  }
+  
+return(outData)
 }

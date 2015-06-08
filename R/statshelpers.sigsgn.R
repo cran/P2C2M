@@ -7,9 +7,9 @@ function (qntls, tail) {
   # Deps:     -
   # I/p:      qntls = a data frame of two columns
 
-  dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-  if (dbgBool) {
-    cat("\n", xtermStyle::style("DEBUGMODE> statshelpers.sigsgn", 
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> statshelpers.sigsgn", 
         fg="red"), sep="")
   }
 

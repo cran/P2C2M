@@ -7,10 +7,10 @@ function(gTree, assoc, singleAllele) {
   #         singleAllele
   # Note:   gsi = "genealogical sorting index"
 
-  #dbgBool = get("P2C2M.flg.dbgBool", envir=p2c2m.globalVars)
-  #if (dbgBool) {
-  #  cat("\n", xtermStyle::style("DEBUGMODE> calc.gsi", fg="red"), sep="")
-  #}
+  debugBool = get("P2C2M_flg_dbgBool", envir=P2C2M_globalVars)
+  if (debugBool) {
+    cat("\n", xtermStyle::style("DEBUG> calc.gsi", fg="red"), sep="")
+  }
 
   # matching the correct associations
   speciesAssoc = assoc[,1][match(gTree$tip.label, assoc[,2])]
@@ -28,7 +28,7 @@ function(gTree, assoc, singleAllele) {
 
 ### 3. DEBUG mode
 #    logdata = list(list(GSI=data))
-#    names(logdata) = get("p2c2m.flg.repID", envir=p2c2m.globalVars)
+#    names(logdata) = get("P2C2M_flg_repID", envir=P2C2M_globalVars)
 #    loghelpers.dbg(logdata, "DescrStatsRawInput", "INPUT OF 'GSI'")
 
 ## 4. Calculating descriptive statistic
@@ -40,8 +40,8 @@ function(gTree, assoc, singleAllele) {
   }
 
   # Ensuring that the gsi values together add up to a number between 0 and 1
-  outd = lapply(outL, function(x){x/length(outL)})
-  outd = sum(unlist(outd))
+  outD = lapply(outL, function(x){x/length(outL)})
+  outD = sum(unlist(outD))
 
-  return(outd)
+  return(outD)
 }
